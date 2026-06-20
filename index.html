@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dino Bookstore - Tiệm Sách Khủng Long</title>
+    <link rel="icon" type="image/png" href="./img/logo.png" sizes="96x96" />
+    <link rel="shortcut icon" href="./img/logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/logo.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* CSS RESET & BIẾN MÀU SẮC THEO LOGO DINO */
+        :root {
+            --dino-green: #7bbf72; /* Xanh lá của con khủng long */
+            --dino-yellow: #fae478; /* Vàng nhạt từ chữ */
+            --dino-blue: #86d6d8; /* Xanh dương từ chữ */
+            --dino-brown: #5a4231; /* Nâu viền logo, dùng làm màu chữ cho ấm */
+            --bg-cream: #fffdf7; /* Nền kem sáng sủa */
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Quicksand', sans-serif; background-color: var(--bg-cream); color: var(--dino-brown); overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        li { list-style: none; }
+        img { max-width: 100%; height: auto; }
+
+        /* ========================================== */
+        /* CSS TẠO HIỆU ỨNG LOADING XOAY KÈM LOGO     */
+        /* ========================================== */
+        .loader-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .dino-spinner-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 6px solid #eef7ed;
+            border-top: 6px solid var(--dino-green);
+            border-radius: 50%;
+            animation: dinoSpin 1.2s linear infinite;
+            z-index: 1;
+        }
+        .dino-logo-center {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            border: 3px solid var(--dino-brown);
+            background-color: white;
+            object-fit: cover;
+            z-index: 2;
+            animation: dinoLogoPulse 1.2s infinite ease-in-out;
+        }
+        .dino-loading-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dino-brown);
+            letter-spacing: 1.5px;
+            animation: dinoFade 1s infinite ease-in-out alternate;
+        }
+        @keyframes dinoSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes dinoLogoPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+        @keyframes dinoFade {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* HEADER */
+        header { background: white; box-shadow: 0 4px 15px rgba(123, 191, 114, 0.1); position: sticky; top: 0; z-index: 1000; border-bottom: 3px solid var(--dino-green); }
+        .nav-container { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; position: relative; }
+        .logo { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--dino-green); display: flex; align-items: center; gap: 10px; z-index: 1010; }
+        .logo img { height: 50px; width: 50px; border-radius: 50%; border: 2px solid var(--dino-brown); object-fit: cover; background: white; }
+        
+        /* Menu mặc định trên Máy tính */
+        .menu { display: flex; gap: 25px; font-weight: 700; font-size: 1rem; color: var(--dino-brown); }
+        .menu a:hover { color: var(--dino-green); text-shadow: 0px 2px 0px var(--dino-yellow); }
+        
+        /* Khu vực icon bên phải */
+        .header-icons { display: flex; gap: 18px; font-size: 1.2rem; align-items: center; color: var(--dino-green); padding-bottom: 5px; z-index: 1010; }
+        .icon-btn { cursor: pointer; display: inline-block; transition: transform 0.2s; user-select: none; }
+        .icon-btn:hover { transform: scale(1.15); }
+        
+        /* NÚT MỞ MENU TRÊN MOBILE (Mặc định ẩn trên PC) */
+        .menu-toggle-btn { display: none; font-size: 1.5rem; cursor: pointer; user-select: none; color: var(--dino-brown); border: 2px solid var(--dino-brown); padding: 2px 8px; border-radius: 8px; background: white; transition: all 0.2s; }
+        
+        /* KHU VỰC KHUNG SUY NGHĨ NHẠC */
+        .music-wrapper { position: relative; display: inline-block; }
+        .thinking-bubble {
+            position: absolute;
+            top: 160%; 
+            right: 0; /* Giữ cố định bong bóng bám sát lề phải */
+            background: white;
+            color: var(--dino-brown);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 2px solid var(--dino-green);
+            box-shadow: 3px 3px 0px var(--dino-yellow);
+            white-space: nowrap;
+            visibility: visible;
+            opacity: 1;
+            z-index: 1001;
+        }
+        .thinking-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: 100%; 
+            right: 6px; 
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent transparent var(--dino-green) transparent;
+        }
+
+        .spinning { animation: spin 3s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* KHU VỰC CHUNG */
+        .section-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
+
+        /* 1. HERO BANNER CHÍNH */
+        .hero-section { display: flex; align-items: center; justify-content: space-between; min-height: 80vh; gap: 50px; position: relative; }
+        .hero-text { flex: 1; }
+        .hero-text h1 { font-family: 'Fredoka', sans-serif; font-size: 5rem; color: var(--dino-green); line-height: 1.1; letter-spacing: -1px; text-shadow: 3px 3px 0px var(--dino-yellow); }
+        .hero-text h1 span.highlight { color: var(--dino-blue); font-size: 3.5rem; text-shadow: 2px 2px 0px var(--dino-brown); }
+        .hero-text p { margin-top: 25px; font-size: 1.2rem; line-height: 1.6; font-weight: 600; max-width: 90%; }
+        .hero-img { flex: 1.2; text-align: center; position: relative; }
+        .hero-img img { width: 100%; max-width: 450px; border-radius: 50%; border: 8px dashed var(--dino-yellow); padding: 10px; background: white; filter: drop-shadow(0 15px 25px rgba(123, 191, 114, 0.2)); }
+
+        /* 2. MỘT CHÚT VỀ TIỆM */
+        .about-section { display: flex; justify-content: space-between; align-items: center; gap: 40px; margin-top: 100px; flex-wrap: wrap; }
+        .about-title { text-align: center; width: 100%; margin-bottom: 20px; }
+        .about-title h2 { font-family: 'Fredoka', sans-serif; font-size: 3.5rem; line-height: 1.2; color: var(--dino-brown); }
+        .about-title span { color: var(--dino-blue); }
+        .about-title .brand-name { color: var(--dino-green); font-size: 4rem; text-shadow: 2px 2px 0px var(--dino-yellow); }
+        
+        .paper-note { background: #fff; padding: 30px; box-shadow: 5px 5px 0px var(--dino-yellow); border: 3px solid var(--dino-brown); border-radius: 15px; width: 300px; font-size: 1rem; font-weight: 600; line-height: 1.6; position: relative; margin: 0 auto; }
+        .polaroid-small { background: white; padding: 10px 10px 30px 10px; border: 3px solid var(--dino-brown); border-radius: 15px; box-shadow: 5px 5px 0px var(--dino-green); width: 250px; margin: 0 auto; }
+        .polaroid-small img { width: 100%; display: block; border-radius: 8px; }
+        .rot-left { transform: rotate(-5deg); }
+        .rot-right { transform: rotate(7deg); margin-top: 50px; }
+        .about-content-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 100%; align-items: center; }
+
+        /* 3. KHÁCH HÀNG NÓI GÌ - ĐÃ CẢI TIẾN CHUẨN RESPONSIVE 3 KHỐI FLEXBOX */
+        .testimonial-section { margin: 100px auto; text-align: center; padding: 0 20px; }
+        .testimonial-title h2 { font-family: 'Fredoka', sans-serif; font-size: 3rem; color: var(--dino-brown); line-height: 1.2; margin-bottom: 40px; }
+        .testimonial-title span { color: var(--dino-green); }
+        
+        .testimonial-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 25px; /* Khoảng cách giữa các ô ảnh */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            flex: 1; /* Chia đều 3 cột ngang trên PC */
+            background: white;
+            border: 3px solid var(--dino-brown);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 6px 6px 0px var(--dino-yellow);
+        }
+        
+        .testimonial-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* 4. FOOTER */
+        footer { background-color: var(--dino-green); color: white; padding: 60px 20px 20px 20px; margin-top: 100px; font-size: 1rem; border-top: 5px solid var(--dino-brown); }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: flex; gap: 50px; border-bottom: 2px dashed rgba(255,255,255,0.4); padding-bottom: 40px; flex-wrap: wrap; }
+        .footer-left { flex: 1; border-right: 2px dashed rgba(255,255,255,0.4); padding-right: 40px; min-width: 280px; }
+        .footer-logo { font-family: 'Fredoka', sans-serif; display: flex; align-items: center; gap: 15px; font-size: 2.5rem; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px 0px var(--dino-brown); }
+        .footer-logo img { height: 60px; width: 60px; border-radius: 50%; border: 2px solid white; object-fit: cover; background: white; }
+        .branch-list li { margin-bottom: 15px; line-height: 1.5; font-weight: 600; }
+        .footer-right { flex: 2; min-width: 280px; }
+        
+        .social-icons { display: flex; gap: 15px; margin-bottom: 30px; }
+        .social-icons a { display: inline-block; }
+        
+        /* Định dạng các ô chứa Icon SVG */
+        .social-icons span { 
+            width: 45px; 
+            height: 45px; 
+            background: var(--dino-yellow); 
+            color: var(--dino-brown); 
+            border: 2px solid var(--dino-brown); 
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            transition: transform 0.2s, background-color 0.2s; 
+        }
+        .social-icons span:hover { transform: scale(1.1); background: white; }
+        .social-icons svg { display: block; }
+
+        .footer-contact { display: flex; justify-content: center; margin-top: 20px; padding-top: 20px; font-weight: 700; text-align: center; flex-wrap: wrap; gap: 10px; }
+
+        /* NÚT LIÊN HỆ FIXED BÊN GÓC DƯỚI MÀN HÌNH */
+        .dino-contact-floating { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; align-items: center; }
+        .floating-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(90, 66, 49, 0.15); cursor: pointer; transition: all 0.3s ease; user-select: none; border: 3px solid var(--dino-brown); }
+        .flat-icon { color: white; font-weight: 700; font-size: 1.2rem; font-family: 'Fredoka', sans-serif; }
+        .flat-zalo-btn { background-color: var(--dino-green); }
+        .flat-zalo-btn .flat-icon { font-size: 0.85rem; letter-spacing: -0.5px; }
+        .flat-phone-btn { background-color: var(--dino-green); animation: dinoHeartbeat 1.5s infinite ease-in-out; }
+        .flat-top-btn { width: 40px; height: 40px; border: 2px solid var(--dino-green); background: #fff; }
+        .flat-top-btn span { color: var(--dino-green); font-size: 0.9rem; font-weight: bold; }
+        .floating-btn:hover { transform: scale(1.1) translateY(-3px); }
+        
+        .phone-btn-wrapper { position: relative; display: flex; align-items: center; }
+        .phone-text-bubble { position: absolute; right: 125%; background: white; color: var(--dino-brown); font-size: 0.8rem; font-weight: 700; padding: 8px 15px; border-radius: 12px; border: 2px solid var(--dino-green); box-shadow: -4px 4px 0px var(--dino-yellow); white-space: nowrap; pointer-events: none; visibility: visible; opacity: 1; }
+        .phone-text-bubble::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 6px; border-style: solid; border-color: transparent transparent transparent var(--dino-green); }
+
+        @keyframes dinoHeartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 900px) {
+            .nav-container { padding: 10px 15px; flex-wrap: nowrap; }
+            .menu-toggle-btn { display: block; order: 2; }
+            .header-icons { order: 3; gap: 12px; }
+            .logo { order: 1; font-size: 1.4rem; }
+            .logo img { height: 40px; width: 40px; }
+
+            /* THANH MENU BUNG DỌC TUYỆT ĐỐI */
+            .menu { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: white; padding: 15px 20px; gap: 15px; box-shadow: 0 10px 20px rgba(90, 66, 49, 0.12); border-bottom: 3px solid var(--dino-green); text-align: left; z-index: 999; }
+            .menu.active { display: flex; }
+            .menu li { width: 100%; padding: 8px 10px; border-bottom: 1px dashed #eee; }
+            .menu li:last-child { border-bottom: none; }
+
+            /* Căn chỉnh lại nội dung trang chủ trên Mobile */
+            .hero-section { flex-direction: column; text-align: center; margin-top: 30px; }
+            .hero-text p { margin: 20px auto; }
+            .about-section { margin-top: 50px; }
+            .hero-text h1 { font-size: 3rem; }
+            .hero-text h1 span.highlight { font-size: 2.2rem; }
+            .about-title h2, .about-title .brand-name { font-size: 2.5rem; }
+            .testimonial-title h2 { font-size: 2rem; }
+            .rot-left, .rot-right { transform: none; margin-top: 20px; }
+            .paper-note { width: 100%; max-width: 350px; }
+            .polaroid-small { width: 100%; max-width: 300px; }
+            .hero-img img { max-width: 80%; }
+            
+            /* Sửa 3 ô ảnh tự động xếp dọc, bám khít vừa màn hình mobile */
+            .testimonial-wrapper {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .testimonial-card {
+                width: 100%;
+                max-width: 450px;
+                margin: 0 auto;
+                box-shadow: 5px 5px 0px var(--dino-yellow);
+            }
+            
+            /* Giao diện Footer trên Mobile */
+            .footer-left { border-right: none; padding-right: 0; border-bottom: 2px dashed rgba(255,255,255,0.4); padding-bottom: 20px; }
+            .footer-logo { font-size: 2rem; justify-content: center; }
+            .branch-list { text-align: center; }
+            .social-icons { justify-content: center; }
+            
+            /* Bong bóng suy nghĩ nhạc trên Mobile */
+            .thinking-bubble { top: 140%; font-size: 0.65rem; padding: 4px 8px; right: 0; }
+
+            /* Hỗ trợ đồng bộ thêm class từ trang thumua nếu có */
+            .page-banner h1, .thumua-banner h1 { font-size: 2.2rem; }
+            .page-banner p, .thumua-banner p { font-size: 1rem; }
+            .reason-row, .reason-row.reverse { flex-direction: column; gap: 20px; padding: 20px; }
+            .reason-img { width: 100%; }
+            .reason-img img { height: 200px; }
+            .policy-section { padding: 30px 20px; }
+            .policy-section h2 { font-size: 1.8rem; }
+            .policy-p { font-size: 1rem; }
+        }
+    </style>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/rRfKTY65/Screenshot-2026-05-13-145741.png">
+</head>
+<body>
+
+    <div id="dino-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-cream); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s ease;">
+        <div style="text-align: center;">
+            <div class="loader-container">
+                <div class="dino-spinner-ring"></div>
+                <img src="img/logo.png" alt="Dino Logo Center" class="dino-logo-center">
+            </div>
+            <div class="dino-loading-text">Loading....</div>
+        </div>
+    </div>
+
+    <audio id="bg-music" src="music.mp3" loop></audio>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="img/logo.png" alt="Dino Logo"> 
+                <a href="index.html">Dino Bookstore</a>
+            </div>
+            
+            <ul class="menu" id="main-menu">
+                <li><a href="index.html" style="color: var(--dino-green);">Trang chủ</a></li>
+                <li><a href="sach.html">About sách</a></li>
+                <li><a href="thumua.html">Thu mua sách cũ</a></li>
+                <li><a href="tamdac.html">Góc tâm đắc</a></li>
+                <li><a href="group.html">Cộng đồng</a></li>
+            </ul>
+            
+            <div class="header-icons">
+                <span><a href="https://www.facebook.com/dinobookstoree/">🛒</a></span>
+                
+                <div class="music-wrapper">
+                    <div class="thinking-bubble">Chill một chút ✨ </div>
+                    <span class="icon-btn" id="music-btn" onclick="toggleMusic()">💿</span>
+                </div>
+                
+                <span class="menu-toggle-btn" id="toggle-btn" onclick="toggleMobileMenu()">☰</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="section-container hero-section">
+        <div class="hero-text">
+            <h1>GÓC NHỎ<br>CỦA <span class="highlight">DINO</span></h1>
+            <p>Nơi khủng long béo gặm sách mỗi ngày thay vì gặm thịt! Cùng Dino lạc vào thế giới của những trang sách cũ kỹ nhưng chứa đầy điều diệu kỳ nhé.</p>
+        </div>
+        <div class="hero-img">
+            <img src="img/logo.png" alt="Dino béo cắn sách">
+        </div>
+    </div>
+
+    <div class="section-container about-section">
+        <div class="about-title">
+            <h2>MỘT CHÚT<br><span>Về</span> <span class="brand-name">DINO BOOKSTORE</span></h2>
+        </div>
+        
+        <div class="about-content-wrapper">
+            <div class="polaroid-small rot-left">
+                <img src="img/id1.jpg" alt="Ảnh decor">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="paper-note">
+                    Dino Bookstore được ấp ủ từ niềm đam mê đọc truyện đến quên ăn của một chú khủng long béo. Ở đây tụi mình không chỉ bán sách, mà còn bán cả sự cute hột me!
+                </div>
+                <div class="paper-note" style="margin-top: 20px; background-color: var(--dino-yellow);">
+                    Slogan của hang: "Gặm sách thay cơm". Cứ bước vào tiệm là tự động no bụng bằng niềm vui, thế nào cũng nhặt được một cuốn sách chuẩn gu mang về cất tủ!
+                </div>
+            </div>
+
+            <div class="polaroid-small rot-right">
+                <img src="img/id2.webp" alt="Chủ tiệm">
+            </div>
+        </div>
+    </div>
+
+    <div class="section-container testimonial-section">
+        <div class="testimonial-title">
+            <h2>KHÁCH HÀNG<br><span>NÓI GÌ VỀ DINO?</span></h2>
+        </div>
+        
+        <div class="testimonial-wrapper">
+            <div class="testimonial-card">
+                <img src="img/cm1.png" alt="Khách hàng review Khối 1">
+            </div>
+            <div class="testimonial-card">
+                <img src="img/cm2.png" alt="Khách hàng review Khối 2">
+            </div>
+            <div class="testimonial-card">
+                <img src="img/cm3.png" alt="Khách hàng review Khối 3">
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <img src="https://i.ibb.co/rRfKTY65/Screenshot-2026-05-13-145741.png" alt="Dino Logo"> 
+                    DINO BOOKSTORE
+                </div>
+                <a href="https://www.facebook.com/dinobookstoree/" target="_blank" style="display: inline-block; background: var(--dino-yellow); color: var(--dino-brown); padding: 5px 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid var(--dino-brown); font-weight: 800; transition: all 0.2s ease; cursor: pointer;" onmouseover="this.style.backgroundColor='white'; this.style.transform='scale(1.05)';" onmouseout="this.style.backgroundColor='var(--dino-yellow)'; this.style.transform='scale(1)';">
+                    Tiệm Sách Online 🌐
+                </a>
+                <ul class="branch-list">
+                    <li>📍 Trạm xuất phát: Hà Nội, Việt Nam</li>
+                    <li>📦 Ship COD toàn quốc - Nhận sách thanh toán</li>
+                    <li>🤝 Bao check hàng thoải mái trước khi nhận!</li>
+                </ul>
+            </div>
+            <div class="footer-right">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/dinobookstoree/" target="_blank" title="Facebook">
+                        <span>
+                            <svg viewBox="0 0 320 512" width="18" height="18" fill="currentColor">
+                                <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path>
+                            </svg>
+                        </span>
+                    </a>
+
+                    <a href="https://zalo.me/0971181320" target="_blank" title="Zalo">
+                        <span>
+                            <svg viewBox="0 0 512 512" width="18" height="18" fill="currentColor">
+                                <path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7L42.4 448c-1.5 5.3 3.6 10.2 8.8 8.4l82.2-28.7c35 15.1 73.4 22.3 122.6 22.3 141.4 0 256-93.1 256-208S397.4 32 256 32zm0 368c-40.3 0-77.4-10.4-108-28.2l-51.4 18 10.4-55.1C66.3 301.7 48 253.2 48 240c0-97.1 93.3-176 208-176s208 78.9 208 176-93.3 176-208 176z"></path>
+                                <text x="50%" y="53%" dominant-baseline="middle" text-anchor="middle" font-family="'Fredoka', sans-serif" font-size="240" font-weight="700">Z</text>
+                            </svg>
+                        </span>
+                    </a>
+
+                    <a href="https://www.threads.com/@dinobookstoree" target="_blank" title="Threads">
+                        <span>
+                            <svg viewBox="0 0 448 512" width="18" height="18" fill="currentColor">
+                                <path d="M331.5 235.7c2.2 .9 4.2 1.9 6.3 2.8c29.2 14.1 50.6 35.2 61.8 61.4c15.7 36.5 17.2 95.8-30.3 143.2c-36.2 36.2-80.3 52.5-142.6 53h-.3c-70.2-.5-124.1-24.1-160.4-70.2c-32.3-41-48.9-98.1-49.5-169.6V256v-.2C17 184.3 33.6 127.2 65.9 86.2C102.2 40.1 156.2 16.5 226.4 16h.3c70.3 .5 124.9 24 162.3 69.9c18.4 22.7 32 50 40.6 81.7l-40.4 10.8c-7.1-25.8-17.8-47.8-32.2-65.4c-29.2-35.8-73-54.2-130.5-54.6c-57 .5-100.1 18.8-128.2 54.4C72.1 146.1 58.5 194.3 58 256c.5 61.7 14.1 109.9 40.3 143.3c28 35.6 71.2 53.9 128.2 54.4c51.4-.4 85.4-12.6 113.7-40.9c32.3-32.2 31.7-71.8 21.4-95.9c-6.1-14.2-17.1-26-31.9-34.9c-3.7 26.9-11.8 48.3-24.7 64.8c-17.1 21.8-41.4 33.6-72.7 35.3c-23.6 1.3-46.3-4.4-63.9-16c-20.8-13.8-33-34.8-34.3-59.3c-2.5-48.3 35.7-83 95.2-86.4c21.1-1.2 40.9-.3 59.2 2.8c-2.4-14.8-7.3-26.6-14.6-35.2c-10-11.7-25.6-17.7-46.2-17.8H227c-16.6 0-39 4.6-53.3 26.3l-34.4-23.6c19.2-29.1 50.3-45.1 87.8-45.1h.8c62.6 .4 99.9 39.5 103.7 107.7l-.2 .2zm-156 68.8c1.3 25.1 28.4 36.8 54.6 35.3c25.6-1.4 54.6-11.4 59.5-73.2c-13.2-2.9-27.8-4.4-43.4-4.4c-4.8 0-9.6 .1-14.4 .4c-42.9 2.4-57.2 23.2-56.2 41.8l-.1 .1z"></path>
+                            </svg>
+                        </span>
+                    </a>
+
+                    <a href="https://www.instagram.com/dinobookstoree/" target="_blank" title="Instagram">
+                        <span>
+                            <svg viewBox="0 0 448 512" width="18" height="18" fill="currentColor">
+                                <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2s34.4-58 36.2-93.9c2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"></path>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+                <ul class="branch-list">
+                    <li>🦖 Tiệm luôn hỗ trợ nhiệt tình, khách hàng cứ nhắn tin trao đổi thoải mái đừng ngại nha!</li>
+                    <li>⏰ Dino vẫn luôn trực Page mỗi ngày để sẵn sàng tiếp nhận and xử lý tin nhắn của mọi người.</li>
+                    <li>💬 Cứ để lại lời nhắn, Dino sẽ kiểm tra and phản hồi lại khách hàng sớm nhất có thể nhó!</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-contact">
+            📞 Gọi hoặc Zalo cho Dino: 0971 181 320 &nbsp;&nbsp;|&nbsp;&nbsp; ✉️ E-mail: dinobookstoree@gmail.com
+        </div>
+    </footer>
+
+    <div class="dino-contact-floating">
+        <a href="https://zalo.me/0971181320" target="_blank" class="floating-btn flat-zalo-btn" title="Chat Zalo">
+            <span class="flat-icon">Zalo</span>
+        </a>
+
+        <div class="phone-btn-wrapper">
+            <div class="phone-text-bubble">Gọi ngay cho Dino! 🦖</div>
+            <a href="tel:0971181320" class="floating-btn flat-phone-btn">
+                <span class="flat-icon">📞</span>
+            </a>
+        </div>
+
+        <div class="floating-btn flat-top-btn" onclick="scrollToTop()" title="Lên đầu trang">
+            <span>▲</span>
+        </div>
+    </div>
+
+    <script>
+        // Logic ẩn màn hình preloader khi trang web đã tải xong tài nguyên
+        window.addEventListener('load', function () {
+            var preloader = document.getElementById('dino-preloader');
+            setTimeout(function() {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }, 600); // Trễ nhẹ 0.6 giây để ngắm logo phập phồng
+        });
+
+        // 1. Hàm bật tắt nhạc
+        function toggleMusic() {
+            var audio = document.getElementById('bg-music');
+            var btn = document.getElementById('music-btn');
+            
+            if (audio.paused) {
+                audio.play();
+                btn.classList.add('spinning');
+                btn.innerText = '🎵'; 
+            } else {
+                audio.pause();
+                btn.classList.remove('spinning');
+                btn.innerText = '💿'; 
+            }
+        }
+
+        // 2. Hàm đóng mở Menu dọc trên Điện thoại
+        function toggleMobileMenu() {
+            var menu = document.getElementById('main-menu');
+            var btn = document.getElementById('toggle-btn');
+            
+            menu.classList.toggle('active');
+            
+            if (menu.classList.contains('active')) {
+                btn.innerText = '✖';
+                btn.style.borderColor = '#e74c3c';
+                btn.style.color = '#e74c3c';
+            } else {
+                btn.innerText = '☰';
+                btn.style.borderColor = 'var(--dino-brown)';
+                btn.style.color = 'var(--dino-brown)';
+            }
+        }
+
+        // 3. Cuộn lên đầu trang mượt mà
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
